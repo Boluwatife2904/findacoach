@@ -22,8 +22,8 @@ export default {
       default: false,
     },
     to: {
-      required: false
-    }
+      required: false,
+    },
   },
 };
 </script>
@@ -68,5 +68,13 @@ button:active {
 .outline:hover,
 .outline:active {
   background-color: #edd2ff;
+}
+
+@media screen and (max-width: 500px) {
+  button,
+  a {
+    padding: 0.5rem 1.2rem;
+    font-size: 15px;
+  }
 }
 </style>

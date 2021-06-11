@@ -5,10 +5,10 @@
 </template>
 
 <script>
-  export default {
-    name: "BaseBadge",
-    props: ["text", "type"]
-  }
+export default {
+  name: 'BaseBadge',
+  props: ['text', 'type'],
+};
 </script>
 
 <style scoped>
@@ -35,5 +35,12 @@
 .career {
   background-color: #8d006e;
   color: white;
+}
+
+@media screen and (max-width: 500px) {
+  .badge {
+    padding: 0.5rem 1.2rem;
+    font-size: 14px;
+  }
 }
 </style>
