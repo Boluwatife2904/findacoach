@@ -1,5 +1,11 @@
 <template>
   <div class="auth-wrapper">
+    <base-dialog title="Hold on a bit..." :show="isLoading" fixed>
+      <base-spinner></base-spinner>    
+    </base-dialog>
+    <base-dialog :show="!!error" title="An error occurred!" @close="handleError">
+      <p>{{ error }}</p>
+    </base-dialog>
     <base-card>
       <h2>Login</h2>
       <form @submit.prevent="submitForm">
@@ -52,6 +58,8 @@ export default {
         errorMessage: "",
       },
       formIsInvalid: false,
+      isLoading: false,
+      error: null,
     };
   },
   methods: {
@@ -77,16 +85,30 @@ export default {
           "Your password must contain at least 6 characters.";
       }
     },
-    submitForm() {
+    async submitForm() {
       this.validateForm();
       if (this.formIsInvalid) {
         return;
       }
-      console.log(this.email.value, this.password.value);
+      const userInfo = {
+        email: this.email.value,
+        password: this.password.value
+      }
+      this.isLoading = true;
+      try {
+        await this.$store.dispatch("login", userInfo)
+        this.isLoading = false;
+      } catch (error) {
+        this.error = error;
+        this.isLoading = false;
+      }
     },
     resetValidity(input) {
       this[input].invalid = false;
     },
+    handleError() {
+      this.error = null;
+    }
   },
 };
 </script>
