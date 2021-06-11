@@ -78,12 +78,17 @@ export default {
           "Your password must contain at least 6 characters.";
       }
     },
-    submitForm() {
+    async submitForm() {
       this.validateForm();
       if (this.formIsInvalid) {
         return;
       }
-      console.log(this.email.value, this.password.value);
+      const userInfo = { email: this.email.value, password: this.password.value }
+      try {
+        this.$store.dispatch("signup", userInfo)
+      } catch(error) {
+        console.log(error)
+      }
     },
     resetValidity(input) {
       this[input].invalid = false;
