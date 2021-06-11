@@ -1,5 +1,11 @@
 <template>
   <div class="auth-wrapper">
+    <base-dialog fixed :show="isLoading" title="Authenticating...">
+      <base-spinner></base-spinner>
+    </base-dialog>
+    <base-dialog :show="!!error" title="An Error Occurred!" @close="handleError">
+      <p>{{ error }}</p>
+    </base-dialog>
     <base-card>
       <h2>Signup</h2>
       <form @submit.prevent="submitForm">
@@ -52,6 +58,8 @@ export default {
         errorMessage: "",
       },
       formIsInvalid: false,
+      isLoading: false,
+      error: null,
     };
   },
   methods: {
@@ -83,16 +91,25 @@ export default {
       if (this.formIsInvalid) {
         return;
       }
-      const userInfo = { email: this.email.value, password: this.password.value }
+      const userInfo = {
+        email: this.email.value,
+        password: this.password.value,
+      };
+      this.isLoading = true;
       try {
-        this.$store.dispatch("signup", userInfo)
-      } catch(error) {
-        console.log(error)
+        await this.$store.dispatch("signup", userInfo);
+        this.isLoading = false;
+      } catch (error) {
+        this.error = error || "Error occured while signing you up.";
+        this.isLoading = false;
       }
     },
     resetValidity(input) {
       this[input].invalid = false;
     },
+    handleError() {
+      this.error = null;
+    }
   },
 };
 </script>

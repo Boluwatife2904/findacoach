@@ -12,7 +12,7 @@ export default {
     );
     const responseData = await response.json();
     if (!response.ok) {
-      const error = new Error(responseData.message || 'An error occurred trying to sign you up.');
+      const error = new Error(responseData.error.message || 'An error occurred trying to sign you up.');
       throw error;
     }
     const { idToken, localId, expiresIn } = responseData

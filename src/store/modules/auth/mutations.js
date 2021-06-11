@@ -4,7 +4,4 @@ export default {
     state.userId = payload.userId;
     state.tokenExpiration = payload.tokenExpiration;
   },
-  setLoginState(state, payload) {
-    state.isLoggedIn = payload;
-  }
 };
