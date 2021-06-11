@@ -23,7 +23,7 @@ export default {
 <style scoped>
 header {
   width: 100%;
-  height: 5rem;
+  /* height: 5rem; */
   background-color: #3d008d;
   display: flex;
   justify-content: center;
@@ -32,6 +32,7 @@ header {
   position: sticky;
   top: 0;
   left: 0;
+  padding: 1.5rem 0;
 }
 
 header a {
@@ -82,5 +83,15 @@ header ul {
 
 li {
   margin: 0 0.5rem;
+}
+
+@media screen and (max-width: 500px) {
+  header {
+    padding-top: 0.5rem;
+  }
+  
+  header nav {
+    flex-direction: column;
+  }
 }
 </style>
