@@ -16,7 +16,7 @@
           <base-button mode="outline" @click="loadCoaches(true)"
             >Refresh</base-button
           >
-          <base-button link to="/register" v-if="!isCoach && !isLoading"
+          <base-button link to="/register-as-coach" v-if="!isCoach && !isLoading"
             >Register as a Coach</base-button
           >
         </div>
