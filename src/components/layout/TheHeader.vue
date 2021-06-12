@@ -6,8 +6,14 @@
         <li>
           <router-link to="/coaches">Coaches</router-link>
         </li>
-        <li>
+        <li v-if="isAuthenticated">
           <router-link to="/requests">Requests</router-link>
+        </li>
+        <li v-else>
+          <router-link to="/login">Login</router-link>
+        </li>
+        <li v-if="isAuthenticated">
+          <base-button @click="logout">Logout</base-button>
         </li>
       </ul>
     </nav>
@@ -16,14 +22,24 @@
 
 <script>
 export default {
-
-}
+  name: "TheHeader",
+  computed: {
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    }
+  },
+  methods: {
+    async logout() {
+      await this.$store.dispatch("logout");
+      this.$router.replace("/login");
+    }
+  }
+};
 </script>
 
 <style scoped>
 header {
   width: 100%;
-  /* height: 5rem; */
   background-color: #3d008d;
   display: flex;
   justify-content: center;
@@ -89,7 +105,7 @@ li {
   header {
     padding-top: 0.5rem;
   }
-  
+
   header nav {
     flex-direction: column;
   }

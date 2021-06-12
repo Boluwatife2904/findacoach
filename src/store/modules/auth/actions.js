@@ -23,6 +23,7 @@ export default {
       userId: localId,
       tokenExpiration: expiresIn
     });
+    context.commit("setAuthState", true);
   },
   async login(context, payload) {
     const response = await fetch(
@@ -49,5 +50,14 @@ export default {
       userId: localId,
       tokenExpiration: expiresIn
     });
+    context.commit("setAuthState", true);
+  },
+  logout(context) {
+    context.commit("setUser", {
+      token: null,
+      userId: null,
+      tokenExpiration: null
+    });
+    context.commit("setAuthState", false);
   }
 };

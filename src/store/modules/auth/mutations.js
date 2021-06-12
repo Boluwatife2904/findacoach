@@ -4,4 +4,7 @@ export default {
     state.userId = payload.userId;
     state.tokenExpiration = payload.tokenExpiration;
   },
+  setAuthState(state, payload) {
+    state.isAuthenticated = payload;
+  }
 };

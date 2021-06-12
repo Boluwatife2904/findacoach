@@ -98,6 +98,7 @@ export default {
       try {
         await this.$store.dispatch("login", userInfo)
         this.isLoading = false;
+        this.$router.replace("/coaches")
       } catch (error) {
         this.error = error;
         this.isLoading = false;
