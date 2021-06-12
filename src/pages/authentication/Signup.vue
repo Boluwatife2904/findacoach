@@ -99,6 +99,7 @@ export default {
       try {
         await this.$store.dispatch("signup", userInfo);
         this.isLoading = false;
+        this.$router.replace("/coaches")
       } catch (error) {
         this.error = error || "Error occured while signing you up.";
         this.isLoading = false;
