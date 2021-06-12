@@ -1,58 +1,72 @@
 <template>
-  <form @submit.prevent="contactCoach">
-    <div class="form-control" :class="{ invalid: email.invalid }">
-      <label for="email">Email Address</label>
-      <input
-        type="email"
-        name="email"
-        id="email"
-        v-model.trim="email.value"
-        @focus="resetValidity('email')"
-      />
-      <p v-if="email.invalid">You need to provide a message to the Coach</p>
-    </div>
-    <div class="form-control" :class="{ invalid: message.invalid }">
-      <label for="message">Message</label>
-      <textarea
-        name="message"
-        id="message"
-        v-model.trim="message.value"
-        cols="30"
-        rows="7"
-        @focus="resetValidity('message')"
-      ></textarea>
-      <p v-if="message.invalid">You need to provide a message to the Coach</p>
-    </div>
-    <div class="actions">
-      <base-button>Send Request</base-button>
-    </div>
-  </form>
+  <div class="wrapper">
+    <form @submit.prevent="contactCoach">
+      <div class="form-control" :class="{ invalid: email.invalid }">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          v-model.trim="email.value"
+          @focus="resetValidity('email')"
+        />
+        <p v-if="email.invalid">You need to provide a message to the Coach</p>
+      </div>
+      <div class="form-control" :class="{ invalid: message.invalid }">
+        <label for="message">Message</label>
+        <textarea
+          name="message"
+          id="message"
+          v-model.trim="message.value"
+          cols="30"
+          rows="7"
+          @focus="resetValidity('message')"
+        ></textarea>
+        <p v-if="message.invalid">You need to provide a message to the Coach</p>
+      </div>
+      <div class="actions">
+        <base-button>Send Request</base-button>
+      </div>
+    </form>
+    <base-dialog
+      :show="requestSent"
+      title="Request Sent..."
+      @close="requestSent = false"
+    >
+      <p>
+        Your request has been sent to the coach. Kindly wait for a response from
+        the coach on what to do next. Thanks.
+      </p>
+    </base-dialog>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'ContactCoach',
+  name: "ContactCoach",
   data() {
     return {
       email: {
-        value: '',
+        value: "",
         invalid: false,
       },
       message: {
-        value: '',
+        value: "",
         invalid: false,
       },
       formIsInvalid: false,
+      isLoading: false,
+      requestSent: false,
     };
   },
   methods: {
     validateForm() {
       this.formIsInvalid = false;
-      if (this.email.value === '') {
+      if (this.email.value === "") {
         this.email.invalid = true;
         this.formIsInvalid = true;
       }
-      if (this.message.value === '') {
+      if (this.message.value === "") {
         this.message.invalid = true;
         this.formIsInvalid = true;
       }
@@ -60,7 +74,7 @@ export default {
     resetValidity(input) {
       this[input].invalid = false;
     },
-    contactCoach() {
+    async contactCoach() {
       this.validateForm();
       if (this.formIsInvalid) {
         return;
@@ -68,9 +82,19 @@ export default {
       const formData = {
         coachId: this.$route.params.id,
         email: this.email.value,
-        message: this.message.value
+        message: this.message.value,
+      };
+      this.isLoading = true;
+      try {
+        await this.$store.dispatch("requests/contactCoach", formData);
+        this.isLoading = false;
+        this.requestSent = true;
+        this.email.value = "";
+        this.message.value = "";
+      } catch (error) {
+        console.log(error);
+        this.isLoading = false;
       }
-      this.$store.dispatch("requests/contactCoach", formData);
     },
   },
 };
