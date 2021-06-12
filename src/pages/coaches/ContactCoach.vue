@@ -28,6 +28,9 @@
         <base-button>Send Request</base-button>
       </div>
     </form>
+    <base-dialog :show="isLoading" title="Sending request to Coach..." fixed>
+      <base-spinner></base-spinner>
+    </base-dialog>
     <base-dialog
       :show="requestSent"
       title="Request Sent..."

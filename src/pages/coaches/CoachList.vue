@@ -16,7 +16,6 @@
           <base-button mode="outline" @click="loadCoaches(true)"
             >Refresh</base-button
           >
-          <base-button link to="/login" v-if="!isAuthenticated">Login</base-button>
           <base-button link to="/register-as-coach" v-if="isAuthenticated && !isCoach && !isLoading"
             >Register as a Coach</base-button
           >
@@ -34,9 +33,8 @@
             :rate="coach.hourlyRate"
             :areas="coach.areas"
           ></coach-item>
-          {{ isAuthenticated }}
         </ul>
-        <h3 v-else>No Coaches Found</h3>
+        <h3 v-else class="no-coach">No Coaches Found</h3>
       </base-card>
     </section>
   </div>
@@ -120,5 +118,10 @@ ul {
 .controls {
   display: flex;
   justify-content: space-between;
+}
+
+.no-coach {
+  margin: 40px 0;
+  text-align: center;
 }
 </style>

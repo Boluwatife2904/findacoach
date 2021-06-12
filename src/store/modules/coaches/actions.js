@@ -8,28 +8,27 @@ export default {
       hourlyRate: payload.rate,
       areas: payload.areas
     };
-
     const token = context.rootGetters.token;
-
     const response = await fetch(
       `https://newfindacoach-default-rtdb.firebaseio.com/coaches/${userId}.json?auth=${token}`,
       {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(coach)
       }
     );
-
     const responseData = await response.json();
-    console.log(responseData);
-
+    // error handling
     if (!response.ok) {
-      // error handling
+      const error = new Error(
+        responseData.error ||
+          "Failed to sign you up as a Coach. Please try again later. Thanks."
+      );
+      throw error;
     }
-
-    context.commit('registerCoach', {
+    context.commit("registerCoach", {
       ...coach,
       id: userId
     });
@@ -44,7 +43,7 @@ export default {
     const responseData = await response.json();
     if (!response.ok) {
       // Error Handling goes in here
-      const error = new Error('Error fetching coaches');
+      const error = new Error("Error fetching coaches");
       throw error;
     }
     const coaches = [];
@@ -59,7 +58,7 @@ export default {
       };
       coaches.push(newCoach);
     }
-    context.commit('setCoaches', coaches);
-    context.commit('setFetchTimestamp');
+    context.commit("setCoaches", coaches);
+    context.commit("setFetchTimestamp");
   }
 };
