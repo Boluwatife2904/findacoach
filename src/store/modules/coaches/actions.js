@@ -9,8 +9,10 @@ export default {
       areas: payload.areas
     };
 
+    const token = context.rootGetters.token;
+
     const response = await fetch(
-      `https://newfindacoach-default-rtdb.firebaseio.com/coaches/${userId}.json`,
+      `https://newfindacoach-default-rtdb.firebaseio.com/coaches/${userId}.json?auth=${token}`,
       {
         method: 'PUT',
         headers: {

@@ -7,19 +7,19 @@ export default {
     const response = await fetch(
       `https://newfindacoach-default-rtdb.firebaseio.com/requests/${payload.coachId}.json`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-type': 'application/json'
+          "Content-type": "application/json"
         },
         body: JSON.stringify(newRequest)
       }
     );
     const responseData = await response.json();
     if (!response.ok) {
-      const error = new Error(responseData.message || 'Error sending request.');
+      const error = new Error(responseData.message || "Error sending request.");
       throw error;
     }
-    context.commit('addRequest', {
+    context.commit("addRequest", {
       ...newRequest,
       id: responseData.name,
       coachId: payload.coachId
@@ -27,14 +27,13 @@ export default {
   },
   async fetchRequests(context) {
     const coachId = context.rootGetters.userId;
+    const token = context.rootGetters.token;
     const response = await fetch(
-      `https://newfindacoach-default-rtdb.firebaseio.com/requests/${coachId}.json`
+      `https://newfindacoach-default-rtdb.firebaseio.com/requests/${coachId}.json?auth=${token}`
     );
     const responseData = await response.json();
     if (!response.ok) {
-      const error = new Error(
-        responseData.error || 'Failed to load requests.'
-      );
+      const error = new Error(responseData.error || "Failed to load requests.");
       throw error;
     }
     const requests = [];
@@ -47,6 +46,6 @@ export default {
       };
       requests.push(request);
     }
-    context.commit('setRequests', requests);
+    context.commit("setRequests", requests);
   }
 };
