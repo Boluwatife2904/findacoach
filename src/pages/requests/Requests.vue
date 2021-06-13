@@ -66,7 +66,8 @@ export default {
     },
     handleError() {
       if(this.error.message.includes("expired")) {
-        this.$store.dispatch("logout")
+        this.$store.dispatch("logout");
+        this.$router.replace("/coaches")
       }
       this.error.value = false;
     },
