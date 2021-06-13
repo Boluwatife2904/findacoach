@@ -65,6 +65,9 @@ export default {
       }
     },
     handleError() {
+      if(this.error.message.includes("expired")) {
+        this.$store.dispatch("logout")
+      }
       this.error.value = false;
     },
   },
