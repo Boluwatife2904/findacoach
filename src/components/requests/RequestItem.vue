@@ -1,6 +1,6 @@
 <template>
   <li>
-    <a :href="emailLink">{{ email }}</a>
+    <a :href="'mailto:' + email">{{ email }}</a>
     <p>{{ message }}</p>
   </li>
 </template>
@@ -9,11 +9,6 @@
 export default {
   name: "RequestItem",
   props: ["email", "message"],
-  computed: {
-    emailLink() {
-      return "mailto:" + this.email
-    }
-  }
 }
 </script>
 

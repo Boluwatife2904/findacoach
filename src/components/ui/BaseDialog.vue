@@ -23,6 +23,7 @@
 
 <script>
 export default {
+  name: "BaseDialog",
   props: {
     show: {
       type: Boolean,
@@ -38,15 +39,16 @@ export default {
       default: false,
     },
   },
-  emits: ['close'],
-  methods: {
-    tryClose() {
-      if (this.fixed) {
-        return;
+  emits: ["close"],
+  setup(props, context) {
+    const tryClose = () => {
+      if(props.fixed) {
+        return
       }
-      this.$emit('close');
-    },
-  },
+      context.emit("close")
+    }
+    return { tryClose }
+  }
 };
 </script>
 
@@ -105,11 +107,11 @@ menu {
 }
 
 .dialog-enter-active {
-  transition: all .3s ease-out;
+  transition: all 0.3s ease-out;
 }
 
 .dialog-leave-active {
-  transition: all .3s ease-in;
+  transition: all 0.3s ease-in;
 }
 
 .dialog-enter-to,

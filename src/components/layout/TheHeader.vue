@@ -21,18 +21,22 @@
 </template>
 
 <script>
+import { computed } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 export default {
   name: "TheHeader",
-  computed: {
-    isAuthenticated() {
-      return this.$store.getters.isAuthenticated;
+  setup() {
+    const store = useStore();
+    const router = useRouter();
+    // Computed properties
+    const isAuthenticated = computed(() => store.getters.isAuthenticated);
+    // Methods
+    const logout = async () => {
+      await store.dispatch("logout");
+      router.replace("/login");
     }
-  },
-  methods: {
-    async logout() {
-      await this.$store.dispatch("logout");
-      this.$router.replace("/login");
-    }
+    return { isAuthenticated, logout }
   }
 };
 </script>
