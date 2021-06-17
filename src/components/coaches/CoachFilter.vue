@@ -3,15 +3,33 @@
     <h2>Find Your Coach</h2>
     <form>
       <span class="filter-option">
-        <input type="checkbox" value="frontend" id="frontend" @change="setFilter" checked>
+        <input
+          type="checkbox"
+          value="frontend"
+          id="frontend"
+          @change="setFilter"
+          checked
+        />
         <label for="frontend">Frontend</label>
       </span>
       <span class="filter-option">
-        <input type="checkbox" value="backend" id="backend" @change="setFilter" checked>
+        <input
+          type="checkbox"
+          value="backend"
+          id="backend"
+          @change="setFilter"
+          checked
+        />
         <label for="backend">Backend</label>
       </span>
       <span class="filter-option">
-        <input type="checkbox" value="career" id="career" @change="setFilter" checked>
+        <input
+          type="checkbox"
+          value="career"
+          id="career"
+          @change="setFilter"
+          checked
+        />
         <label for="career">Career</label>
       </span>
     </form>
@@ -19,32 +37,29 @@
 </template>
 
 <script>
+import { ref } from "vue";
 export default {
-  name: 'filterCoaches',
+  name: "filterCoaches",
   emits: ["change-filter"],
-  data() {
-    return {
-      filters: {
-        frontend: true,
-        backend: true,
-        career: true,
-      }
-    }
-  },
-  methods: {
-    filterCoaches() {
-      console.log('Coaches have been filtered');
-    },
-    setFilter(event) {
+  setup(_, context) {
+    // Data
+    const filters = ref({
+      frontend: true,
+      backend: true,
+      career: true,
+    });
+    // Methods
+    const setFilter = (event) => {
       const inputId = event.target.id;
       const isActive = event.target.checked;
       const updatedFilters = {
-        ...this.filters,
-        [inputId]: isActive
-      }
-      this.filters = updatedFilters;
-      this.$emit("change-filter", updatedFilters)
+        ...filters.value,
+        [inputId]: isActive,
+      };
+      filters.value = updatedFilters;
+      context.emit("change-filter", updatedFilters);
     }
+    return { setFilter }
   },
 };
 </script>

@@ -7,7 +7,7 @@
         name="firstName"
         id="firstName"
         v-model.trim="firstName.value"
-        @focus="resetValidity('firstName')"
+        @focus="resetValidity(firstName)"
       />
       <p v-if="!firstName.valid">First name cannot be empty</p>
     </div>
@@ -18,7 +18,7 @@
         name="lastName"
         id="lastName"
         v-model.trim="lastName.value"
-        @focus="resetValidity('lastName')"
+        @focus="resetValidity(lastName)"
       />
       <p v-if="!lastName.valid">Last name cannot be empty</p>
     </div>
@@ -30,9 +30,11 @@
         v-model.trim="description.value"
         cols="30"
         rows="5"
-        @focus="resetValidity('description')"
+        @focus="resetValidity(description)"
       ></textarea>
-      <p v-if="!description.valid">You need to provide a description of yourself.</p>
+      <p v-if="!description.valid">
+        You need to provide a description of yourself.
+      </p>
     </div>
     <div class="form-control" :class="{ invalid: !hourlyRate.valid }">
       <label for="hourlyRate">Rate</label>
@@ -41,9 +43,11 @@
         name="hourlyRate"
         id="hourlyRate"
         v-model.number="hourlyRate.value"
-        @focus="resetValidity('hourlyRate')"
+        @focus="resetValidity(hourlyRate)"
       />
-      <p v-if="!hourlyRate.valid">You need to provide a hourly rate that cannot be negative</p>
+      <p v-if="!hourlyRate.valid">
+        You need to provide a hourly rate that cannot be negative
+      </p>
     </div>
     <div class="form-control" :class="{ invalid: !areas.valid }">
       <h6>Areas of Expertise</h6>
@@ -54,7 +58,7 @@
           id="frontend"
           value="frontend"
           v-model="areas.value"
-          @focus="resetValidity('areas')"
+          @focus="resetValidity(areas)"
         />
         <label for="frontend">Frontend Development</label>
       </div>
@@ -65,7 +69,7 @@
           id="backend"
           value="backend"
           v-model="areas.value"
-          @focus="resetValidity('areas')"
+          @focus="resetValidity(areas)"
         />
         <label for="backend">Backend Development</label>
       </div>
@@ -76,89 +80,102 @@
           id="career"
           value="career"
           v-model="areas.value"
-          @focus="resetValidity('areas')"
+          @focus="resetValidity(areas)"
         />
         <label for="career">Career Advisory</label>
       </div>
-      <p v-if="!areas.valid">You need to select at least one area of expertise.</p>
+      <p v-if="!areas.valid">
+        You need to select at least one area of expertise.
+      </p>
     </div>
     <base-button>Register</base-button>
   </form>
 </template>
 
 <script>
+import { reactive, ref } from "vue";
 export default {
-  name: 'RegistrationForm',
-  emits: ['save-data'],
-  data() {
-    return {
-      firstName: {
-        value: '',
-        valid: true,
-      },
-      lastName: {
-        value: '',
-        valid: true,
-      },
-      description: {
-        value: '',
-        valid: true,
-      },
-      hourlyRate: {
-        value: null,
-        valid: true,
-      },
-      areas: {
-        value: [],
-        valid: true,
-      },
-      formIsValid: true,
-    };
-  },
-  methods: {
-    validateForm() {
-      this.formIsValid = true;
-      if (this.firstName.value === '') {
-        this.firstName.valid = false;
-        this.formIsValid = false;
-      }
-      if (this.lastName.value === '') {
-        this.lastName.valid = false;
-        this.formIsValid = false;
-      }
-      if (this.description.value === '') {
-        this.description.valid = false;
-        this.formIsValid = false;
-      }
-      if (!this.hourlyRate.value || this.hourlyRate.value <= 0) {
-        this.hourlyRate.valid = false;
-        this.formIsValid = false;
-      }
-      if (!this.areas.value || this.areas.value.length <= 0) {
-        this.areas.valid = false;
-        this.formIsValid = false;
-      }
-      return this.formIsValid;
-    },
-    resetValidity(input) {
-      this[input].valid = true;
-    },
-    registerAsCoach() {
-      this.validateForm();
+  name: "RegistrationForm",
+  emits: ["save-data"],
+  setup(_, context) {
+    // Data
+    const firstName = reactive({
+      value: "",
+      valid: true,
+    });
+    const lastName = reactive({
+      value: "",
+      valid: true,
+    });
+    const description = reactive({
+      value: "",
+      valid: true,
+    });
+    const hourlyRate = reactive({
+      value: null,
+      valid: true,
+    });
+    const areas = reactive({
+      value: [],
+      valid: true,
+    });
+    const formIsValid = ref(true);
 
-      if (!this.formIsValid) {
+    // Methods
+    const validateForm = () => {
+      formIsValid.value = true;
+      if (firstName.value === "") {
+        firstName.valid = false;
+        formIsValid.value = false;
+      }
+      if (lastName.value === "") {
+        lastName.valid = false;
+        formIsValid.value = false;
+      }
+      if (description.value === "") {
+        description.valid = false;
+        formIsValid.value = false;
+      }
+      if (!hourlyRate.value || hourlyRate.value <= 0) {
+        hourlyRate.valid = false;
+        formIsValid.value = false;
+      }
+      if (!areas.value || areas.value.length <= 0) {
+        areas.valid = false;
+        formIsValid.value = false;
+      }
+    };
+
+    const resetValidity = (input) => {
+      input.valid = true;
+    };
+
+    const registerAsCoach = () => {
+      validateForm();
+
+      if (!formIsValid.value) {
         return;
       }
 
       const formData = {
-        first: this.firstName.value,
-        last: this.lastName.value,
-        desc: this.description.value,
-        rate: this.hourlyRate.value,
-        areas: this.areas.value,
+        first: firstName.value,
+        last: lastName.value,
+        desc: description.value,
+        rate: hourlyRate.value,
+        areas: areas.value,
       };
-      this.$emit('save-data', formData);
-    },
+      context.emit("save-data", formData);
+    };
+
+    return {
+      firstName,
+      lastName,
+      description,
+      hourlyRate,
+      areas,
+      resetValidity,
+      registerAsCoach
+    };
   },
 };
 </script>
@@ -183,12 +200,12 @@ label {
   margin-bottom: 0.5rem;
 }
 
-input[type='checkbox'] + label,
-input[type='checkbox'] {
+input[type="checkbox"] + label,
+input[type="checkbox"] {
   cursor: pointer;
 }
 
-input[type='checkbox'] + label {
+input[type="checkbox"] + label {
   font-weight: normal;
   display: inline;
   margin: 0 0 0 0.5rem;
@@ -213,7 +230,7 @@ textarea:focus {
   border-color: #3d008d;
 }
 
-input[type='checkbox'] {
+input[type="checkbox"] {
   display: inline;
   width: auto;
   border: none;
@@ -225,15 +242,17 @@ h3 {
 }
 
 .invalid label {
-  color: red;
+  color: crimson;
 }
 
 .invalid input,
 .invalid textarea {
-  border: 1px solid red;
+  border: 1px solid crimson;
 }
 
 .invalid p {
   margin-top: 8px;
+  font-size: 14px;
+  color: crimson;
 }
 </style>

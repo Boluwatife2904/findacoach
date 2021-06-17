@@ -11,40 +11,40 @@
       ></base-badge>
     </div>
     <div class="actions">
-      <base-button link mode="outline" :to="contactCoachLink">Contact</base-button>
-      <base-button link :to="viewCoachLink"
-        >View Details</base-button
+      <base-button link mode="outline" :to="contactCoachLink"
+        >Contact</base-button
       >
+      <base-button link :to="viewCoachLink">View Details</base-button>
     </div>
   </li>
 </template>
 
 <script>
-import BaseBadge from '../ui/BaseBadge.vue';
+import { computed } from "vue";
+import BaseBadge from "../ui/BaseBadge.vue";
 export default {
   components: { BaseBadge },
-  name: 'CoachItem',
-  props: ['id', 'firstName', 'lastName', 'rate', 'areas'],
-  computed: {
-    fullName() {
-      return `${this.firstName} ${this.lastName}`;
-    },
-    contactCoachLink() {
+  name: "CoachItem",
+  props: ["id", "firstName", "lastName", "rate", "areas"],
+  setup(props) {
+    const fullName = computed(() => `${props.firstName} ${props.lastName}`);
+    const contactCoachLink = computed(() => {
       return {
-        name: 'ContactCoach',
+        name: "CoachDetails",
         params: {
-          id: this.id,
+          id: props.id,
         },
       };
-    },
-    viewCoachLink() {
+    });
+    const viewCoachLink = computed(() => {
       return {
-        name: 'CoachDetails',
+        name: "CoachDetails",
         params: {
-          id: this.id,
+          id: props.id,
         },
       };
-    },
+    });
+    return { fullName, contactCoachLink, viewCoachLink };
   },
 };
 </script>
