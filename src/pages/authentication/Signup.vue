@@ -3,7 +3,11 @@
     <base-dialog fixed :show="isLoading" title="Authenticating...">
       <base-spinner></base-spinner>
     </base-dialog>
-    <base-dialog :show="!!error" title="An Error Occurred!" @close="handleError">
+    <base-dialog
+      :show="!!error"
+      title="An Error Occurred!"
+      @close="handleError"
+    >
       <p>{{ error }}</p>
     </base-dialog>
     <base-card>
@@ -16,7 +20,7 @@
             name="email"
             id="email"
             v-model.trim="email.value"
-            @focus="resetValidity('email')"
+            @focus="resetValidity(email)"
           />
           <p v-if="email.invalid">{{ email.errorMessage }}</p>
         </div>
@@ -27,7 +31,7 @@
             name="password"
             id="password"
             v-model.trim="password.value"
-            @focus="resetValidity('password')"
+            @focus="resetValidity(password)"
           />
           <p v-if="password.invalid">{{ password.errorMessage }}</p>
         </div>
@@ -43,75 +47,30 @@
 </template>
 
 <script>
+import authentication from "../../composables/authentication";
 export default {
   name: "Signup",
-  data() {
+  setup() {
+    const {
+      email,
+      password,
+      error,
+      isLoading,
+      submitForm,
+      resetValidity,
+      handleError,
+    } = authentication("signup");
+
     return {
-      email: {
-        value: "",
-        invalid: false,
-        errorMessage: "",
-      },
-      password: {
-        value: "",
-        invalid: false,
-        errorMessage: "",
-      },
-      formIsInvalid: false,
-      isLoading: false,
-      error: null,
+      email,
+      password,
+      error,
+      isLoading,
+      submitForm,
+      resetValidity,
+      handleError,
     };
-  },
-  methods: {
-    validateForm() {
-      this.formIsInvalid = false;
-      if (this.email.value === "") {
-        this.formIsInvalid = true;
-        this.email.invalid = true;
-        this.email.errorMessage = "Kindly enter your email address";
-      } else if (!this.email.value.includes("@")) {
-        this.formIsInvalid = true;
-        this.email.invalid = true;
-        this.email.errorMessage = "Please enter a valid email address";
-      }
-      if (this.password.value === "") {
-        this.formIsInvalid = true;
-        this.password.invalid = true;
-        this.password.errorMessage =
-          "You need to create a new password to proceed";
-      } else if (this.password.value.length < 6) {
-        this.formIsInvalid = true;
-        this.password.invalid = true;
-        this.password.errorMessage =
-          "Your password must contain at least 6 characters.";
-      }
-    },
-    async submitForm() {
-      this.validateForm();
-      if (this.formIsInvalid) {
-        return;
-      }
-      const userInfo = {
-        email: this.email.value,
-        password: this.password.value,
-      };
-      this.isLoading = true;
-      try {
-        await this.$store.dispatch("signup", userInfo);
-        this.isLoading = false;
-        this.$router.replace("/coaches")
-      } catch (error) {
-        this.error = error || "Error occured while signing you up.";
-        this.isLoading = false;
-      }
-    },
-    resetValidity(input) {
-      this[input].invalid = false;
-    },
-    handleError() {
-      this.error = null;
-    }
-  },
+  }
 };
 </script>
 
