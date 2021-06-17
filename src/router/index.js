@@ -5,21 +5,6 @@ import CoachList from "../pages/coaches/CoachList.vue";
 // VUEX Import
 import store from "../store/index";
 
-// Async Loaded Components - Coach
-const SingleCoach = () => import("../pages/coaches/SingleCoach.vue");
-const Register = () => import("../pages/coaches/Register.vue");
-const ContactCoach = () => import("../pages/coaches/ContactCoach.vue");
-
-// Async Loaded Components - Requests
-const Requests = () => import("../pages/requests/Requests.vue");
-
-// Async Loaded Components - Authentication
-const Login = () => import("../pages/authentication/Login.vue");
-const Signup = () => import("../pages/authentication/Signup.vue");
-
-// Async Loaded Components - Error404
-const Error404 = () => import("../pages/error/Error404.vue");
-
 const routes = [
   {
     name: "Index",
@@ -34,12 +19,12 @@ const routes = [
   {
     name: "CoachDetails",
     path: "/coaches/:id",
-    component: SingleCoach,
+    component: () => import("../pages/coaches/SingleCoach.vue"),
     children: [
       {
         name: "ContactCoach",
         path: "contact",
-        component: ContactCoach
+        component: () => import("../pages/coaches/ContactCoach.vue"),
       }
     ],
     props: true
@@ -47,7 +32,7 @@ const routes = [
   {
     name: "Register",
     path: "/register-as-coach",
-    component: Register,
+    component: () => import("../pages/coaches/Register.vue"),
     meta: {
       requiresAuthentication: true
     }
@@ -55,7 +40,7 @@ const routes = [
   {
     name: "Requests",
     path: "/requests",
-    component: Requests,
+    component: () => import("../pages/requests/Requests.vue"),
     meta: {
       requiresAuthentication: true
     }
@@ -63,7 +48,7 @@ const routes = [
   {
     name: "Login",
     path: "/login",
-    component: Login,
+    component: () => import("../pages/authentication/Login.vue"),
     meta: {
       noAuthentication: true
     }
@@ -71,7 +56,7 @@ const routes = [
   {
     name: "Signup",
     path: "/signup",
-    component: Signup,
+    component: () => import("../pages/authentication/Signup.vue"),
     meta: {
       noAuthentication: true
     }
@@ -79,7 +64,7 @@ const routes = [
   {
     name: "ErrorPage",
     path: "/:notFound(.*)",
-    component: Error404
+    component: () => import("../pages/error/Error404.vue")
   }
 ];
 
