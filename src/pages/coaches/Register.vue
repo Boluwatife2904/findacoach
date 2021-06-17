@@ -11,39 +11,47 @@
     >
       <base-spinner></base-spinner>
     </base-dialog>
-    <base-dialog :show="!!error" title="An error occurred..." @close="closeDialog">
+    <base-dialog
+      :show="!!error"
+      title="An error occurred..."
+      @close="closeDialog"
+    >
       <p>{{ error }}</p>
     </base-dialog>
   </section>
 </template>
 
 <script>
+import { ref } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import RegisterationForm from "../../components/coaches/RegisterationForm.vue";
 export default {
   components: { RegisterationForm },
-  data() {
-    return {
-      isLoading: false,
-      error: null,
-    };
-  },
-  methods: {
-    async saveData(data) {
-      this.isLoading = true;
+  setup() {
+    const store = useStore();
+    const router = useRouter();
+    // Data
+    const isLoading = ref(false);
+    const error = ref(null);
+    // Methods
+    const saveData = async (data) => {
+      isLoading.value = true;
       try {
-        await this.$store.dispatch("coaches/registerCoach", data);
-        this.$router.replace("/coaches");
-        this.isLoading = false;
-      } catch (error) {
-        this.error =
-          error.message ||
+        await store.dispatch("coaches/registerCoach", data);
+        router.replace("/coaches");
+        isLoading.value = false;
+      } catch (err) {
+        error.value =
+          err.message ||
           "An error occurred when trying to create your account. Please try again later. Thanks.";
-        this.isLoading = false;
+        isLoading.value = false;
       }
-    },
-    closeDialog() {
-      this.error = null;
-    }
+    };
+    const closeDialog = () => {
+      error.value = null;
+    };
+    return { isLoading, error, closeDialog, saveData };
   },
 };
 </script>
