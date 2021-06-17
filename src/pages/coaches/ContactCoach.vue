@@ -8,9 +8,12 @@
           name="email"
           id="email"
           v-model.trim="email.value"
-          @focus="resetValidity('email')"
+          @focus="resetValidity(email)"
         />
-        <p v-if="email.invalid">You need to provide your email address so the Coach can get back in touch.</p>
+        <p v-if="email.invalid">
+          You need to provide your email address so the Coach can get back in
+          touch.
+        </p>
       </div>
       <div class="form-control" :class="{ invalid: message.invalid }">
         <label for="message">Message</label>
@@ -20,7 +23,7 @@
           v-model.trim="message.value"
           cols="30"
           rows="7"
-          @focus="resetValidity('message')"
+          @focus="resetValidity(message)"
         ></textarea>
         <p v-if="message.invalid">You need to provide a message to the Coach</p>
       </div>
@@ -45,60 +48,69 @@
 </template>
 
 <script>
+import { ref, reactive } from "vue";
+import { useStore } from "vuex";
+import { useRoute } from 'vue-router';
 export default {
   name: "ContactCoach",
-  data() {
-    return {
-      email: {
-        value: "",
-        invalid: false,
-      },
-      message: {
-        value: "",
-        invalid: false,
-      },
-      formIsInvalid: false,
-      isLoading: false,
-      requestSent: false,
+  setup() {
+    const store = useStore();
+    const route = useRoute()
+
+    // Data
+    const email = reactive({
+      value: "",
+      invalid: false,
+    });
+    const message = reactive({
+      value: "",
+      invalid: false,
+    });
+    const formIsInvalid = ref(false);
+    const isLoading = ref(false);
+    const requestSent = ref(false);
+
+    // Methods
+    const validateForm = () => {
+      formIsInvalid.value = false;
+      if (email.value === "") {
+        email.invalid = true;
+        formIsInvalid.value = true;
+      }
+      if (message.value === "") {
+        message.invalid = true;
+        formIsInvalid.value = true;
+      }
     };
-  },
-  methods: {
-    validateForm() {
-      this.formIsInvalid = false;
-      if (this.email.value === "") {
-        this.email.invalid = true;
-        this.formIsInvalid = true;
-      }
-      if (this.message.value === "") {
-        this.message.invalid = true;
-        this.formIsInvalid = true;
-      }
-    },
-    resetValidity(input) {
-      this[input].invalid = false;
-    },
-    async contactCoach() {
-      this.validateForm();
-      if (this.formIsInvalid) {
+
+    const resetValidity = (input) => {
+      input.invalid = false;
+    };
+
+    const contactCoach = async () => {
+      validateForm();
+      if (formIsInvalid.value) {
         return;
       }
       const formData = {
-        coachId: this.$route.params.id,
-        email: this.email.value,
-        message: this.message.value,
+        coachId: route.params.id,
+        email: email.value,
+        message: message.value,
       };
-      this.isLoading = true;
+      isLoading.value = true;
       try {
-        await this.$store.dispatch("requests/contactCoach", formData);
-        this.isLoading = false;
-        this.requestSent = true;
-        this.email.value = "";
-        this.message.value = "";
+        await store.dispatch("requests/contactCoach", formData);
+        isLoading.value = false;
+        requestSent.value = true;
+        email.value = "";
+        message.value = "";
       } catch (error) {
         console.log(error);
-        this.isLoading = false;
+        isLoading.value = false;
       }
-    },
+    };
+
+    return { email, message, requestSent, isLoading, resetValidity, contactCoach };
   },
 };
 </script>
