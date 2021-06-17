@@ -30,47 +30,47 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { ref, reactive, computed } from 'vue';
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import RequestItem from '../../components/requests/RequestItem.vue';
 export default {
   components: { RequestItem },
   name: 'Requests',
-  computed: {
-    ...mapGetters({
-      requests: 'requests/requests',
-    }),
-  },
-  data() {
-    return {
-      isLoading: false,
-      error: {
+  setup() {
+    const store = useStore();
+    const router = useRouter();
+    // Data
+    const isLoading = ref(false);
+    const error = reactive({
         value: false,
         message: '',
-      },
-    };
-  },
-  async created() {
-    this.loadRequests();
-  },
-  methods: {
-    async loadRequests() {
-      this.isLoading = true;
+      },)
+    // Computed
+    const requests = computed(() => {
+      return store.getters["requests/requests"]
+    })
+    // Methods
+    const loadRequests = async () => {
+      isLoading.value = true;
       try {
-        await this.$store.dispatch('requests/fetchRequests');
-        this.isLoading = false;
-      } catch (error) {
-        this.error.value = true;
-        this.error.message = error.message || 'Error fetching requests.';
-        this.isLoading = false;
+        await store.dispatch('requests/fetchRequests');
+        isLoading.value = false;
+      } catch (err) {
+        error.value = true;
+        error.message = err.message || 'Error fetching requests.';
+        isLoading.value = false;
       }
-    },
-    handleError() {
-      if(this.error.message.includes("expired")) {
-        this.$store.dispatch("logout");
-        this.$router.replace("/coaches")
+    }
+    loadRequests();
+    const handleError = () => {
+      if(error.message.includes("expired")) {
+        store.dispatch("logout");
+        router.replace("/coaches")
       }
-      this.error.value = false;
-    },
+      error.value = false;
+    }
+    return { isLoading, error,  requests, handleError }
   },
 };
 </script>
