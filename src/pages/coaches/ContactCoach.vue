@@ -10,7 +10,7 @@
           v-model.trim="email.value"
           @focus="resetValidity('email')"
         />
-        <p v-if="email.invalid">You need to provide a message to the Coach</p>
+        <p v-if="email.invalid">You need to provide your email address so the Coach can get back in touch.</p>
       </div>
       <div class="form-control" :class="{ invalid: message.invalid }">
         <label for="message">Message</label>
@@ -106,9 +106,6 @@ export default {
 <style scoped>
 form {
   margin: 1rem 0;
-  /* border: 1px solid #ccc; */
-  /* border-radius: 12px; */
-  /* padding: 1rem; */
 }
 
 .form-control {
