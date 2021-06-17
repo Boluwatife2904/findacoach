@@ -16,7 +16,10 @@
           <base-button mode="outline" @click="loadCoaches(true)"
             >Refresh</base-button
           >
-          <base-button link to="/register-as-coach" v-if="isAuthenticated && !isCoach && !isLoading"
+          <base-button
+            link
+            to="/register-as-coach"
+            v-if="isAuthenticated && !isCoach && !isLoading"
             >Register as a Coach</base-button
           >
         </div>
@@ -41,70 +44,83 @@
 </template>
 
 <script>
-import CoachFilter from '../../components/coaches/CoachFilter.vue';
-import CoachItem from '../../components/coaches/CoachItem.vue';
+import { ref, computed } from "vue";
+import CoachFilter from "../../components/coaches/CoachFilter.vue";
+import CoachItem from "../../components/coaches/CoachItem.vue";
+import { useStore } from "vuex";
 export default {
   components: { CoachItem, CoachFilter },
-  computed: {
-    isAuthenticated() {
-      return this.$store.getters.isAuthenticated;
-    },
-    filteredCoaches() {
-      const coaches = this.$store.getters['coaches/coaches'];
+  setup() {
+    const store = useStore();
+    // Data
+    const isLoading = ref(false);
+    const errorMessage = ref(null);
+    const activeFilters = ref({
+      frontend: true,
+      backend: true,
+      career: true,
+    });
+
+    // Computed
+    const isAuthenticated = computed(() => store.getters.isAuthenticated);
+
+    const hasCoaches = computed(
+      () => !isLoading.value && store.getters["coaches/hasCoaches"]
+    );
+
+    const isCoach = computed(() => store.getters["coaches/isCoach"]);
+
+    const filteredCoaches = computed(() => {
+      const coaches = store.getters["coaches/coaches"];
       return coaches.filter((coach) => {
-        if (this.activeFilters.frontend && coach.areas.includes('frontend')) {
+        if (activeFilters.value.frontend && coach.areas.includes("frontend")) {
           return true;
         }
-        if (this.activeFilters.backend && coach.areas.includes('backend')) {
+        if (activeFilters.value.backend && coach.areas.includes("backend")) {
           return true;
         }
-        if (this.activeFilters.career && coach.areas.includes('career')) {
+        if (activeFilters.value.career && coach.areas.includes("career")) {
           return true;
         }
       });
-    },
-    hasCoaches() {
-      return !this.isLoading && this.$store.getters['coaches/hasCoaches'];
-    },
-    isCoach() {
-      return this.$store.getters['coaches/isCoach'];
-    },
-  },
-  data() {
-    return {
-      isLoading: false,
-      errorMessage: null,
-      activeFilters: {
-        frontend: true,
-        backend: true,
-        career: true,
-      },
+    });
+
+    // Methods
+    const setFilters = (updatedFilters) => {
+      activeFilters.value = updatedFilters;
     };
-  },
-  methods: {
-    setFilters(updatedFilters) {
-      this.activeFilters = updatedFilters;
-      console.log(this.activeFilters);
-    },
-    async loadCoaches(refresh = false) {
-      this.isLoading = true;
+
+    const loadCoaches = async (refresh = false) => {
+      isLoading.value = true;
       try {
-        await this.$store.dispatch('coaches/loadCoaches', {
+        await store.dispatch("coaches/loadCoaches", {
           forceRefresh: refresh,
         });
-        this.isLoading = false;
+        isLoading.value = false;
       } catch (error) {
-        this.isLoading = false;
-        this.errorMessage = error.message || 'Something went wrong';
+        isLoading.value = false;
+        errorMessage.value = error.message || "Something went wrong";
       }
-    },
-    handleError() {
-      this.errorMessage = null;
-    },
-  },
-  created() {
-    this.loadCoaches();
-  },
+    };
+    loadCoaches();
+
+    const handleError = () => {
+      errorMessage.value = null;
+    };
+
+    return {
+      isLoading,
+      errorMessage,
+      activeFilters,
+      setFilters,
+      handleError,
+      isAuthenticated,
+      hasCoaches,
+      isCoach,
+      filteredCoaches,
+      loadCoaches
+    };
+  }
 };
 </script>
 
