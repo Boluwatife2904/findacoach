@@ -35,38 +35,31 @@
 </template>
 
 <script>
+import { computed, ref } from "vue";
+import { useStore } from "vuex";
 export default {
-  props: ['id'],
-  computed: {
-    toContactLink() {
+  props: ["id"],
+  setup(props) {
+    const store = useStore();
+    // Data
+    const selectedCoach = ref(null);
+    // Select Coach with matching id from the store
+    const allCoaches = store.getters["coaches/coaches"];
+    selectedCoach.value = allCoaches.find((coach) => coach.id === props.id);
+    // Computed properties
+    const toContactLink = computed(() => {
       return {
-        name: 'ContactCoach',
+        name: "ContactCoach",
         params: {
-          id: this.id,
+          id: props.id,
         },
       };
-    },
-    fullName() {
-      return `${this.selectedCoach.firstName} ${this.selectedCoach.lastName}`;
-    },
-    rate() {
-      return this.selectedCoach.hourlyRate;
-    },
-    areas() {
-      return this.selectedCoach.areas;
-    },
-    description() {
-      return this.selectedCoach.description;
-    },
-  },
-  data() {
-    return {
-      selectedCoach: null,
-    };
-  },
-  created() {
-    const allCoaches = this.$store.getters['coaches/coaches'];
-    this.selectedCoach = allCoaches.find((coach) => coach.id === this.id);
+    });
+    const fullName = computed(() => `${selectedCoach.value.firstName} ${selectedCoach.value.lastName}`);
+    const rate = computed(() => selectedCoach.value.hourlyRate);
+    const areas = computed(() => selectedCoach.value.areas);
+    const description = computed(() => selectedCoach.value.description);
+    return { toContactLink, fullName, rate, areas, description };
   },
 };
 </script>
